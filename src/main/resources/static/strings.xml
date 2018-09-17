@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<strings>
+
+    <string name="permission_denied">У вас нет прав для доступа к этой части. Обратитесь к администратору.</string>
+    <string name="go_home">На главную</string>
+    <string name="go_back">Назад</string>
+    <string name="error_title">Ошибка</string>
+    <string name="empty"> пусто </string>
+
+    <string name="not_implemented"> К сожалению этот раздел ещё не реализован </string>
+
+    <string name="nav.change_user">Сменить пользователя</string>
+    <string name="nav.testing">Тестирование</string>
+    <string name="nav.edit_questions">Редактировать вопросы</string>
+    <string name="nav.edit_category">Редактировать разделы</string>
+    <string name="nav.admin">Управление</string>
+    <string name="nav.help">Помощь</string>
+    <string name="nav.welcome">Добро пожаловать</string>
+    <string name="nav.login">Войти</string>
+    <string name="nav.registration">Регистрация</string>
+
+
+    <string name="admin.title">Администрирование</string>
+    <string name="admin.welcome">Добро пожаловать %s %s</string>
+    <string name="admin.actions">Доступные действия: </string>
+
+    <string name="admin.strings_reloaded">Строковые константы перезагружены</string>
+    <string name="admin.templates_removed">Кеш шаблонов страниц сброшен</string>
+
+    <string name="admin.actions.profile">Настройки профиля: </string>
+    <string name="admin.actions.users_list">Список пользователей</string>
+    <string name="admin.actions.new_user">Новый пользователь</string>
+    <string name="admin.actions.search_user">Поиск пользователя</string>
+    <string name="admin.actions.edit_questions">Редактор вопросов</string>
+    <string name="admin.actions.settings">Изменить настройки приложения</string>
+    <string name="admin.actions.edit_files">Редактировать загруженные файлы</string>
+    <string name="admin.actions.reload_strings">Перпзагрузить строковые константы</string>
+    <string name="admin.actions.clear_cached_templates">Сбросить кеш шаблонов</string>
+    <string name="admin.actions.sql">SQL</string>
+    <string name="admin.to_start">На стартовую</string>
+    <string name="admin.back">Назад</string>
+    <string name="admin.error.invalid_user_id">Идентификатор пользователя не указан либо указан не верно.</string>
+    <string name="admin.search.title">Введите текст запроса</string>
+    <string name="admin.search.no_users">Подходящие пользователи не найдены.</string>
+    <string name="admin.search.results">Результаты поиска</string>
+    <string name="admin.search.query">по запросу : "%s"</string>
+
+    <string name="admin.delete.title">Удалить</string>
+    <string name="admin.delete.message">%s %s Удален успешно</string>
+    <string name="admin.delete.error">Не удалось найти пользователя</string>
+    <string name="admin.delete.question">Вы действительно хотите удалить пользователя и все связанные с ним данные?</string>
+    <string name="admin.delete.to_list">К списку</string>
+
+    <string name="admin.sql.title">выполнить sql запрос</string>
+    <string name="admin.sql.warning">Внимание! Нехрен сюда лазить если вы не знаете что делаете. Базу можно грохнуть очень и очнь легко</string>
+    <string name="admin.sql.success">Выполнен успешно</string>
+    <string name="admin.sql.updated">Выполнен успешно Обновлено : %s записей</string>
+    <string name="admin.sql.error">Ошиюка %s</string>
+
+    <string name="admin.type.admin">Администратор</string>
+    <string name="admin.type.student">Студент</string>
+    <string name="admin.type.teacher">Преполаватель</string>
+
+    <string name="admin.word.type">Тип</string>
+    <string name="admin.word.first">Имя</string>
+    <string name="admin.word.second">Фамилия</string>
+    <string name="admin.word.third">Отчество</string>
+    <string name="admin.word.group">Группа / кафедра</string>
+    <string name="admin.word.change">изменить</string>
+    <string name="admin.word.remove">удалить</string>
+    <string name="admin.word.save">Сохранить</string>
+    <string name="admin.word.login">Логин</string>
+    <string name="admin.word.password">Пароль (введите новый или оставьте пустым)</string>
+    <string name="admin.users.list">Список пользователей</string>
+    <string name="admin.users.to_list">К списку</string>
+    <string name="admin.users.new">Добавить нового</string>
+    <string name="admin.search">Поиск</string>
+    <string name="admin.search.all">Все</string>
+    <string name="admin.edit.title">Редактирование пользователя</string>
+    <string name="admin.edit.new_title">Добавление нового пользователя</string>
+    <string name="admin.edit.success">Данные сохранены</string>
+    <string name="admin.edit.error_exist">Имя пользователя "%s" уже занято.</string>
+
+    <string name="login.error_incorrect_login_or_password">Логин или пароль введены не верно</string>
+    <string name="login.logout_success">Выход осуществлен</string>
+    <string name="login.welcome">Добро пожаловать</string>
+    <string name="login.registration">Регистрация</string>
+    <string name="login.enter_login_and_password">Введите логин и пароль</string>
+    <string name="login.user_name">Имя вользователя</string>
+    <string name="login.password">Пароль</string>
+    <string name="login.enter">Войти</string>
+
+    <string name="question_editor.errors.no_id">Идентификатор вопроса не задан</string>
+    <string name="question_editor.errors.no_such_question">Вопрос с идентификатором #%s не найден</string>
+
+    <string name="question_editor.errors.no_section_title">Раздел не задан</string>
+    <string name="question_editor.errors.no_subsection_title">Подраздел не задан</string>
+    <string name="question_editor.errors.save_invalid_data">Не задан идентификатор запроса или тело вопроса</string>
+
+</strings>

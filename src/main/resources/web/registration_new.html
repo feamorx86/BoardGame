@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=cp1251"/>
+    <link rel="stylesheet" href="./web/css/test.css"/>
+    <script type="text/javascript">
+        function showLoading(show) {
+            var loadingView = document.getElementById('wait_dialog');
+            var contentView = document.getElementById('userFieldsBlock');
+            if (show) {
+                contentView.className = null;
+                contentView.hidden = true;
+                loadingView.className = 'wait_content';
+                loadingView.hidden = false;
+            } else {
+                loadingView.className = null;
+                loadingView.hidden = true;
+
+                contentView.className = 'content';
+                contentView.hidden = false;
+            }
+        }
+
+        function checkField(name, hint, regexp, error_message) {
+            var view = document.getElementById(name);
+            var hint = document.getElementById(hint);
+            var str = view.value;
+            if (str) str = str.trim();
+            var success;
+            if (regexp) {
+                success = regexp.match(str);
+            } else if (str) {
+                success = true
+            } else {
+                success = false;
+            }
+            if (!success) {
+                hint.innerText = error_message;
+                hint.className = 'test_error';
+            } else {
+                hint.innerText = '';
+                hint.className = null;
+            }
+            return success;
+        }
+
+        function hideHintOnEdit(hint) {
+            var hint = document.getElementById(hint);
+            document.getElementById('error_block').hidden = true;
+            hint.innerText = '';
+            hint.className = null;
+        }
+
+        function collectData() {
+            var user = new Object();
+            user.first_name = document.getElementById('user_first_name_text').value.trim();
+            user.second_name = document.getElementById('user_second_name_text').value.trim();
+            user.alias = document.getElementById('user_alias_text').value.trim();
+
+            user.email= document.getElementById('user_email_text').value.trim();
+            user.password = document.getElementById('user_password_text').value.trim();
+            return user;
+        }
+
+        function showSuccess() {
+            var view = document.getElementById('wait_dialog');
+            view.className = null;
+            view.hidden = true;
+            view = document.getElementById('userFieldsBlock');
+            view.className = null;
+            view.hidden = true;
+            document.getElementById('success_block').hidden = false;
+        }
+
+        function showError(code) {
+            var message;
+            switch (code) {
+                case 1:
+                    message = 'Какая-то хуйвала при отправке данных'
+                    break;
+                case 2:
+                    message ='Почту обязательно';
+                    showHintError('user_email_hint', 'И Как ты с пустой постой будешь входить?')
+                    break;
+                case 3:
+                    message = 'Эта почта уже занята';
+                    showHintError('user_email_hint', 'не катит думай другую')
+                    break;
+                case 4:
+                    message = 'ПАРОЛЬ!';
+                    showHintError('user_password_hint', 'А здесь продаётся славянский шкаф?')
+                    break;
+                case 5:
+                    message = 'Как тебя звать-величать?';
+                    showHintError('user_first_name_hint', 'Марфа Васильевна?')
+                    break;
+                case 6:
+                    message = 'Чёта какая-то хуита, кажись с базой';
+                    break;
+                default:
+                    message = 'А хуй его знает! Говно случается(';
+                    break;
+
+            }
+            document.getElementById('error_block').hidden = false;
+            document.getElementById('error_message').innerText = message;
+        }
+
+        function showHintError(hintId, message) {
+            var hint = document.getElementById(hintId);
+            hint.innerText = message;
+            hint.className = 'test_error';
+        }
+
+        function checkData() {
+            showLoading(true);
+            var waitTitle = document.getElementById('wait_text');
+            waitTitle.innerText = "Проверка данных";
+            var success = true;
+            success = checkField('user_first_name_text', 'user_first_name_hint', '', 'Азаза! Без имени никак.') && success;
+            //success = checkField('user_second_name_text', 'user_second_name_hint', '', 'Азаза! Без имени никак.') && success;
+            //success = checkField('user_alias_text', 'user_alias_hint', '', 'Азаза! Без имени никак.') && success;
+            success = checkField('user_email_text', 'user_email_hint', '', 'И Как ты с пустой постой будешь входить?') && success;
+            success = checkField('user_password_text', 'user_password_hint', '', 'Для особо умных, НЕ ПУСТОЙ БЛЯДЬ!!!!') && success;
+            if (!success) {
+                showLoading(false);
+                document.getElementById('error_block').hidden = false
+                document.getElementById('error_message').innerText = "Слыыыш! еба! А ты ничего не забыл? э?"
+            } else {
+
+                var user = collectData();
+
+                waitTitle.innerText = "Отправка данных на проверку";
+
+                var url = "./game_registration?action=new"
+                var request = new XMLHttpRequest();
+                var body = "user="+encodeURIComponent(JSON.stringify(user));
+                request.onreadystatechange = function () {
+                    if (request.readyState == 4) {
+                        if (request.responseText) {
+                            try {
+                                var js = JSON.parse(request.responseText);
+                                if (js.result == 'success') {
+									showLoading(false);
+									showSuccess();
+                                } else if (js.result == 'error') {
+									showLoading(false);
+                                    showError(js.code);
+                                    console.log("registration error: " + js.message);
+                                } else {
+									showLoading(false);
+                                    showError("Сервер - хуйло");
+								}
+                            } catch(exception) {
+                                console.log('registration, POST data error: '+exception);
+                                showLoading(false);
+                                showError("Херня. серввак того-этого, ему походу пизда! Может позже прокатит?");
+                            }
+                        } else {
+                            showLoading(false)
+                            showError("Пните серввак, ему походу пизда! Может позже прокатит?");
+                        }
+                    }
+                };
+                request.open("POST", url, true);
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                request.send(body);
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Самые ахуительные настолочки!</h1>
+<div id="userDataBlock">
+    <div id="menu" class="menu">
+        ${main-menu}
+    </div>
+    <h2>Регистрация нового игрока</h2>
+    <div id="error_block" hidden >
+        <h3 class="test_error_visible">Секундочку сэээр (мэээм)!</h3>
+        <p>Возникла некоторая оказия:</p>
+        <p id="error_message" class="test_error">некоторые поля заполнены совсем хуёво</p>
+    </div>
+    <div id="wait_dialog" hidden>
+        <p id="wait_text">Проверка данных</p>
+    </div>
+    <div class="content" id="userFieldsBlock">
+        <h3>Ввод данных пользователя</h3>
+        <p id="user_first_name_title" class="button_title">Ваше имя</p>
+        <p id="user_first_name_hint" class="test_error_hidden">Азаза! Без имени никак.</p>
+        <input id="user_first_name_text" type="text" onkeydown="hideHintOnEdit('user_first_name_hint');">
+        <p id="user_second_name_title" class="button_title">Ваше фомилья (ежели угодно)</p>
+        <p id="user_second_name_hint" class="test_error_hidden">Пробельчики и прочие непотребства убери!</p>
+        <input id="user_second_name_text" type="text" onkeydown="hideHintOnEdit('user_second_name_hint');">
+        <p id="user_alias_title" class="button_title">Как к вам обращаться (поганяло)</p>
+        <p id="user_alias_hint" class="test_error_hidden">Пробельчики и прочие непотребства убери!</p>
+        <input id="user_alias_text" type="text" type="text" onkeydown="hideHintOnEdit('user_alias_hint');">
+        <p>Нам глубоко насрать на вашу почту, поэтому:</p>
+        <ul>
+            <li>Нам нафиг не сдалось её подтверждать, это ваши заботы</li>
+            <li>qw@e.rt, вполне себе убедительная почта</li>
+            <li>Почта используется для входа, потому что Иванов Иван meganagibator666 много, а почта nagibator@666.cry только одна</li>
+            <li>Забудите пароль, сбросить его можно перейдя по ссылке из письма</li>
+            <li>Ваша почта - ваши проблемы</li>
+        </ul>
+        <p id="user_email_title" class="button_title">Почта, далее это же и имя пользователя</p>
+        <p id="user_email_hint" class="test_error_hidden">Увы занято. Думаем дальше.</p>
+        <input id="user_email_text" type="text" onkeydown="hideHintOnEdit('user_email_hint');">
+        <p id="user_password_title" class="button_title">Пароль, любой но не пустой, например "12".</p>
+        <p id="user_password_hint" class="test_error_hidden">Для особо умных, НЕ ПУСТОЙ БЛЯДЬ!!!!</p>
+        <input id="user_password_text" type="password" onkeydown="hideHintOnEdit('user_password_hint');">
+        <div style="margin-top: 20px">
+            <input id="send" type="button" value="Регистрация" onclick="checkData();">
+        </div>
+    </div>
+    <div id="success_block" hidden>
+        <h1>Регистрация успешно звершена</h1>
+        <h2><a href="${login-url}">Войти</a></h2>
+    </div>
+</div>
+</body></html>

@@ -1,0 +1,623 @@
+<html><head><meta charset="utf-8"/>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,500' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100,500' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="./css/style.css">
+    <script type="text/javascript">
+        function correctAnswerTypeChanged(select) {
+            var list = ['correct_answer_type_single', 'correct_answer_type_multiple', 'correct_answer_type_int', 'correct_answer_type_float', 'correct_answer_type_str'];
+            var hints = [
+                'Выберете правильный ответ.',
+                'Поставьте галочки возле правильных ответов',
+                'Введите ответ на вопрос - целое число. Или оставьте поле пустым если ответ не требуется.',
+                'Введите ответ на вопрос - дробное число (например 3,14). Или оставьте поле пустым если ответ не требуется.',
+                'Введите ответ на вопрос - текст. Или оставьте поле пустым если ответ не требуется.'
+            ];
+            for(var i=0; i<5; i++) {
+                if (i == select.selectedIndex) {
+                    document.getElementById(list[i]).hidden=false;
+                } else {
+                    document.getElementById(list[i]).hidden=true;
+                }
+            }
+            document.getElementById('correct_answer_type_hint').innerText = hints[select.selectedIndex];
+        }
+
+        function textTypeChanged(select, prefix, showHint) {
+            var hint = '';
+            switch(select.selectedIndex) {
+                case 0 :
+                    hint = 'Обычный текст без фрмотирования';
+                    document.getElementById(prefix+'_simple_text').hidden = false;
+                    document.getElementById(prefix+'_image').hidden = true;
+                    document.getElementById(prefix+'_html').hidden = true;
+                    break;
+                case 1 :
+                    hint = 'Одна картинка';
+                    document.getElementById(prefix+'_simple_text').hidden = true;
+                    document.getElementById(prefix+'_image').hidden = false;
+                    document.getElementById(prefix+'_html').hidden = true;
+                    break;
+                case 2 :
+                    hint = 'Вставка HTML-кода, как форматированного текста';
+                    document.getElementById(prefix+'_simple_text').hidden = true;
+                    document.getElementById(prefix+'_image').hidden = true;
+                    document.getElementById(prefix+'_html').hidden = false;
+                    break;
+            }
+            if (showHint) {
+                document.getElementById(prefix+'_text_type_hint').innerText = hint;
+            }
+        }
+
+        function textType_htmlPreview(prefix) {
+            document.getElementById(prefix+'_html_preview_block').hidden = false;
+            var htmlText= document.getElementById(prefix+'_html_text_area').value;
+            document.getElementById(prefix+'_html_preview').innerHTML = htmlText;
+        }
+
+        /*Simple Gallery*/
+
+        function gallery_selectImage(prefix) {
+            document.getElementById(prefix+'_image_img').src = document.getElementById(prefix+'_gallery_result').src;
+            document.getElementById(prefix+'_gallery_dialog').close();
+        }
+
+        function gallery_cancel(prefix) {
+            document.getElementById(prefix+'_gallery_dialog').close();
+        }
+
+        function gallery_thumbClick(prefix, e, img){
+            var target = e.target;
+            while (target != img) {
+                if (target.nodeName == 'A') {
+                    var large = document.getElementById(prefix+'_gallery_result');
+                    large.src = target.href;
+                    large.alt = target.title;
+                    return false;
+                }
+                target = target.parentNode;
+            }
+        }
+
+        function gallery_openRemote(prefix) {
+            var url = "./gallery/list_all";//use any url that have json data
+            var request;
+            var thumbs = document.getElementById(prefix+'_gallery_thumbs');
+            var gallery = document.getElementById(prefix+'_gallery');
+            var gallery_loading = document.getElementById(prefix+'_gallery_loading');
+
+            gallery.hidden = true;
+            gallery_loading.hidden = false;
+            document.getElementById(prefix+'_gallery_dialog').showModal();
+
+            while (thumbs.firstChild) {
+                thumbs.removeChild(thumbs.firstChild);
+            }
+            request = new XMLHttpRequest();
+            request.onreadystatechange  = function(){
+                if (request.readyState == 4  ) {
+                    gallery.hidden = false;
+                    gallery_loading.hidden = true;
+                    var jsonObj = JSON.parse(request.responseText);//JSON.parse() returns JSON object
+                    for(var i = 0; i < jsonObj.files.length; i++) {
+                        var f =  jsonObj.files[i];
+                        var imageItem = document.createElement('li');
+                        imageItem.innerHTML = '<a href="'+f+'" title="Image 2"><img src='+f+'></a>';
+                        imageItem.onclick = function(e) {
+                            gallery_thumbClick(prefix, e, this);
+                        }
+                        thumbs.appendChild(imageItem);
+                    }
+                }
+            };
+            request.open("GET", url, true);
+            request.send();
+        }
+
+        function gallery_uploadAndShow(prefix, input_item) {
+            var files = input_item.files;
+            if (files.length <= 0)
+                return;
+            var url = "./gallery/upload";//use any url that have json data
+            var request;
+            request = new XMLHttpRequest();
+            var formData = new FormData();
+
+            for(i=0; i<files.length; i++) {
+                var f = files[i];
+                formData.append(f.name, f);
+            }
+            request.onreadystatechange  = function(){
+                if (request.readyState == 4  ) {
+                    var js = JSON.parse(request.responseText);//JSON.parse() returns JSON object
+                    if (js.result == 'success') {
+                        input_item.value = '';
+                        gallery_openRemote(prefix);
+                    } else {
+                        alert("Error : "+js.text);
+                    }
+                }
+            };
+            request.open("POST", url, true);
+            request.send(formData);
+        }
+
+        var answerIndex = 2;
+
+        function removeAnswer(answerNumber) {
+            var id = 'answer' + answerNumber;
+            var correctAnswer;
+            var container = document.getElementById('answer_container');
+            var answer = document.getElementById(id);
+            if (answer != null) {
+                container.removeChild(answer);
+            }
+
+            correctAnswer = document.getElementById('correct_answer_single_p_' + answerNumber);
+            if (correctAnswer != null) {
+                document.getElementById('correct_answer_type_single').removeChild(correctAnswer);
+            }
+
+            correctAnswer = document.getElementById('correct_answer_multiple_p_' + answerNumber);
+            if (correctAnswer != null) {
+                document.getElementById('correct_answer_type_multiple').removeChild(correctAnswer);
+            }
+
+            correctAnswer = document.getElementById('correct_answer_int_p_' + answerNumber);
+            if (correctAnswer != null) {
+                document.getElementById('correct_answer_type_int').removeChild(correctAnswer);
+            }
+
+            correctAnswer = document.getElementById('correct_answer_float_p_' + answerNumber);
+            if (correctAnswer != null) {
+                document.getElementById('correct_answer_type_float').removeChild(correctAnswer);
+            }
+
+            correctAnswer = document.getElementById('correct_answer_str_p_' + answerNumber);
+            if (correctAnswer != null) {
+                document.getElementById('correct_answer_type_str').removeChild(correctAnswer);
+            }
+
+            updateTitles();
+        }
+
+        function updateTitles() {
+            var found = 1;
+            for(var i=0; i<=answerIndex; i++) {
+                var id = 'answer'+i+'_title';
+                var title = document.getElementById(id);
+                if (title != null) {
+                    title.innerText = "Ответ № "+found;
+                    title = document.getElementById('single_'+i);
+                    if (title != null) title.innerText = "Ответ № "+found;
+                    title = document.getElementById('multiple_'+i);
+                    if (title != null) title.innerText = "Ответ № "+found;
+                    title = document.getElementById('int_'+i);
+                    if (title != null) title.innerText = "Ответ на вопрос № "+found+' : ';
+                    title = document.getElementById('float_'+i);
+                    if (title != null) title.innerText = "Ответ на вопрос № "+found+' : ';
+                    title = document.getElementById('str_'+i);
+                    if (title != null) title.innerText = "Ответ на вопрос № "+found+' : ';
+                    found++;
+                }
+            }
+        }
+
+        function addAnswer() {
+            answerIndex++;
+            var element = document.createElement("div");
+            var id = 'answer'+answerIndex;
+            element.id = id;
+            element.innerHTML =
+                    '<div id = "'+id+'" class="answers">'+
+                    '<h2 id="'+id+'_title">Ответ № '+answerIndex+' </h2>'+
+                    '<input class="answers_remove" type="button" value="удалить" onclick="removeAnswer(\''+answerIndex+'\')">'+
+                    '<h3>Тип текста</h3>' +
+                    '<p><select id="'+id+'_text_type" size="0" onchange="textTypeChanged(this, \''+id+'\', false)">' +
+                    '<option selected value="0">Обычный текст</option>' +
+                    '<option value="1">Одиночное изображение</option>' +
+                    '<option value="2">HTML-код</option>' +
+                    '</select></p>' +
+                    '<div id="'+id+'_simple_text"><h3>Введите текст</h3><p><textarea id="'+id+'_simple_text_area" rows="2" cols="120"></textarea></p></div>' +
+                    '<div id="'+id+'_image" hidden><h3>Выберете изображение</h3>' +
+                    '<p><img id="'+id+'_image_img" src=""></p>' +
+                    '<p><input type="button" value="Из галереи" onclick="gallery_openRemote(\''+id+'\');"></p>' +
+                    '<p>Загрузить файл</p>' +
+                    '<p><input type="file" value="Добавить" onchange="gallery_uploadAndShow(\''+id+'\', this);"></p>' +
+                    '<dialog class="modal-dialog" id="'+id+'_gallery_dialog">' +
+                    '<div id="'+id+'_gallery" class="gallery" hidden>' +
+                    '<p><img id="'+id+'_gallery_result" src="" onclick="selectImageInGallery(\''+id+'\')"></p>' +
+                    '<p> <ul id="'+id+'_gallery_thumbs"></ul></p>' +
+                    '<p class="gallery-buttons">' +
+                    '<input type="button" value="Выбрать" onclick="gallery_selectImage(\''+id+'\');"/>' +
+                    '<input type="button" value="Отмена" onclick="gallery_cancel(\''+id+'\');"/></p>' +
+                    '</div>' +
+                    '<div id="'+id+'_gallery_loading"><h3>Зазругка изображений</h3></div>' +
+                    '</dialog></div>' +
+                    '<div id="'+id+'_html" hidden><h3>Вставка HTML кода</h3>' +
+                    '<p><textarea id="'+id+'_html_text_area" rows="3" cols="120"></textarea></p>' +
+                    '<p><input type="button" value="Предпросмотр" onclick="textType_htmlPreview(\''+id+'\')"></p>' +
+                    '<div id="'+id+'_html_preview_block" hidden>' +
+                    '<div style="border: solid 1px #ccc;" id="'+id+'_html_preview">' +
+                    '</div></div>' +
+                    '</div></div>';
+            document.getElementById('answer_container').appendChild(element);
+
+            element = document.createElement("p");
+            element.id = 'correct_answer_single_p_'+answerIndex;
+            element.innerHTML ='<input id="correct_answer_single_'+answerIndex+'" name="single" type="radio" value="'+answerIndex+'"><span id="single_'+answerIndex+'">Ответ №'+answerIndex +'</span>';
+            document.getElementById('correct_answer_type_single').appendChild(element);
+
+            element = document.createElement("p");
+            element.id = 'correct_answer_multiple_p_'+answerIndex;
+            element.innerHTML ='<input id="correct_answer_multiple_'+answerIndex+'" name="multiple" type="checkbox" value="'+answerIndex+'"><span id="multiple_'+answerIndex+'">Ответ №'+answerIndex +'</span>';
+            document.getElementById('correct_answer_type_multiple').appendChild(element);
+
+            element = document.createElement("p");
+            element.id = 'correct_answer_int_p_'+answerIndex;
+            element.innerHTML ='<span id="int_'+answerIndex+'">Ответ на вопрос №'+answerIndex +': </span><input id="correct_answer_int_'+answerIndex+'" type="text">';
+            document.getElementById('correct_answer_type_int').appendChild(element);
+
+            element = document.createElement("p");
+            element.id = 'correct_answer_float_p_'+answerIndex;
+            element.innerHTML ='<span id="float_'+answerIndex+'">Ответ на вопрос №'+answerIndex +': </span><input id="correct_answer_float_'+answerIndex+'" type="text">';
+            document.getElementById('correct_answer_type_float').appendChild(element);
+
+            element = document.createElement("p");
+            element.id = 'correct_answer_str_p_'+answerIndex;
+            element.innerHTML ='<span id="str_'+answerIndex+'">Ответ на вопрос №'+answerIndex +': </span><input id="correct_answer_str_'+answerIndex+'" type="text">';
+            document.getElementById('correct_answer_type_str').appendChild(element);
+
+            updateTitles();
+        }
+
+        /*  save & load */
+        function collectData() {
+            //collect text
+            var result = new Object();
+            var element;
+
+            result.id = getUrlParameter('question_text');
+
+            var textAndType;
+
+            element = document.getElementById('correct_answer_type');
+            result.type = element.options[element.selectedIndex].value;
+
+            textAndType = getTextAndType('question_text');
+            result.textType = textAndType.type;
+            result.text = textAndType.text;
+
+            result.answers = new Array();
+            result.correctAnswers = new Array();
+            var index=0;
+            for(var i=0; i<answerIndex; i++) {
+                var id;
+                id = 'answer'+i;
+                element = document.getElementById(id);
+                if (element != null) {
+                    textAndType = getTextAndType(id);
+                    result.answers.push(textAndType);
+
+                    var correctAnswer = null;
+                    switch (result.type) {
+                        case '0'://one correct
+                            if (document.getElementById('correct_answer_single_' + i).checked) {
+                                correctAnswer = index;
+                            }
+                            break;
+                        case '1'://many correct
+                            if (document.getElementById('correct_answer_multiple_' + i).checked) {
+                                correctAnswer = index;
+                            }
+                            break;
+                        case '2'://int
+                            correctAnswer = document.getElementById('correct_answer_int_' + i).value;
+                            break;
+                        case '3'://float
+                            correctAnswer = document.getElementById('correct_answer_float_' + i).value;
+                            break;
+                        case '4'://string
+                            correctAnswer = document.getElementById('correct_answer_str_' + i).value;
+                            break;
+                    }
+                    if (correctAnswer) {
+                        result.correctAnswers.push(correctAnswer);
+                    }
+                    index++
+                }
+            }
+            return result;
+        }
+
+        function save() {
+            //show loading
+            var data = collectData();
+
+            alert('collected : '+data);
+            return;
+
+            if(data) {
+                var url = "./edit_question?action=save&id="+data.id;//use any url that have json data
+                var request;
+                request = new XMLHttpRequest();
+                var formData = new FormData();
+                formData.append('data', data);
+                request.onreadystatechange = function () {
+                    if (request.readyState == 4) {
+                        var js = JSON.parse(request.responseText);
+                        if (js.result == 'success') {
+                            //hide loading
+                            alert("Success : " + js.text);
+                        } else {
+                            alert("Error : " + js.text);
+                        }
+                    }
+                };
+                request.open("POST", url, true);
+                request.send(formData);
+            } else {
+                //hide loading
+                //show error
+            }
+        }
+
+        function getTextAndType(prefix) {
+            var element = document.getElementById(prefix+'_text_type');
+            var type = element.options[element.selectedIndex].value;
+            var text = "";
+
+            switch (type) {
+                case '0':
+                    element = document.getElementById(prefix+'_simple_text_area');
+                    text = element.value;
+                    break;
+                case '1':
+                    element = document.getElementById(prefix+'_image_img');
+                    text = element.src;
+                    break;
+                case '2':
+                    element = document.getElementById(prefix+'_html_text_area');
+                    text = element.value;
+                    break;
+            }
+            var result = new Object();
+            result.type = type;
+            result.text = text;
+            return result;
+        }
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+    </script>
+
+
+</head>
+<body>
+<header id="fh5co-header" role="banner">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Сергей Свендровский Александрович из root</a>
+                    </div>
+                    <div id="fh5co-navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="./login?action=logout"><span>Сменить пользователя<span class="border"></span></span></a></li>
+                            <li><a href="./simple_test"><span>Тестирование<span class="border"></span></span></a></li>
+                            <li class="active"><a href="./edit_questions"><span>Редактировать вопросы<span class="border"></span></span></a></li>
+                            <li><a href="./edit_category"><span>Редактировать разделы<span class="border"></span></span></a></li>
+                            <li><a href="./admin"><span>Управление<span class="border"></span></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="fh5co-intro text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-md-offset-1">
+                <h1>Редкатор Вопросов</h1>
+                <p>Раздел: <a href="./edit_questions?action=list&section=100">ЗАКОНЫ ВЗАИМОДЕЙСТВИЯ И ДВИЖЕНИЯ ТЕЛ</a></p>
+                <p>Подраздел: <a href="./edit_questions?action=list&section=100">Материальная точка. Система отсчета. Вернуться к вопросам подраздела</a></p>
+
+                <div class="col-md-12 col-md-offset-1">
+                    <h2>Текст вопроса</h2>
+                    <h3>Выберете тип текста</h3>
+                    <p><select id="question_text_text_type" size="0" onchange="textTypeChanged(this, 'question_text', true);">
+                        <option selected value="0">Обычный текст</option>
+                        <option value="1">Одиночное изображение</option>
+                        <option value="2">HTML-код</option>
+                    </select></p>
+                    <p id="question_text_text_type_hint">Обычный текст без фрмотирования</p>
+                    <div id="question_text_simple_text">
+                        <h3>Введите текст</h3>
+                        <p><textarea id="question_text_simple_text_area" rows="5" cols="120"></textarea></p>
+                    </div>
+                    <div id="question_text_image" hidden>
+                        <h3>Выберете изображение</h3>
+                        <p><img id="question_text_image_img" src="static/answare_196.png"></p>
+                        <p><input type="button" value="Из галереи" onclick="gallery_openRemote('question_text');"></p>
+                        <p>Загрузить файл</p>
+                        <p><input type="file" value="Добавить" onchange="gallery_uploadAndShow('question_text', this);"></p>
+
+                        <dialog class="modal-dialog" id="question_text_gallery_dialog">
+                            <div id="question_text_gallery" class="gallery" hidden>
+                                <p><img id="question_text_gallery_result" src="static/answare_196.png" onclick="selectImageInGallery('question_text')"></p>
+                                <p> <ul id="question_text_gallery_thumbs"></ul></p>
+                                <p class="gallery-buttons">
+                                    <input type="button" value="Выбрать" onclick="gallery_selectImage('question_text');"/>
+                                    <input type="button" value="Отмена" onclick="gallery_cancel('question_text');"/>
+                                </p>
+                            </div>
+                            <div id="question_text_gallery_loading">
+                                <h3>Зазругка изображений</h3>
+                            </div>
+                        </dialog>
+                    </div>
+                    <div id="question_text_html" hidden>
+                        <h3>Вставка HTML кода</h3>
+                        <p><textarea id="question_text_html_text_area" rows="10" cols="120"><a href='http://nicedit.com/docs.php'/>Редактор</textarea></p>
+                        <p><input type="button" value="Предпросмотр" onclick="textType_htmlPreview('question_text')"></p>
+                        <div id="question_text_html_preview_block" hidden>
+                            <div style="border: solid 1px #ccc;" id="question_text_html_preview">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-md-offset-1">
+                    <h2>Ответы на вопрос</h2>
+                    <h3>Ответы</h3>
+                    <div id="answer_container">
+                        <div id = "answer1" class="answers">
+                            <h2 id="answer1_title">Ответ № 1 (129)</h2>
+                            <input class="answers_remove" type="button" value="удалить" onclick="removeAnswer('1')"/>
+                            <h3>Тип текста</h3>
+                            <p><select id="answer1_text_type" size="0" onchange="textTypeChanged(this, 'answer1', false)">
+                                <option selected value="0">Обычный текст</option>
+                                <option value="1">Одиночное изображение</option>
+                                <option value="2">HTML-код</option>
+                            </select></p>
+                            <!--<p id="answer1_text_type_hint">Обычный текст без фрмотирования</p>-->
+                            <div id="answer1_simple_text">
+                                <h3>Введите текст</h3>
+                                <p><textarea id="answer1_simple_text_area" rows="2" cols="120"></textarea></p>
+                            </div>
+                            <div id="answer1_image" hidden>
+                                <h3>Выберете изображение</h3>
+                                <p><img id="answer1_image_img" src="static/answare_196.png"></p>
+                                <p><input type="button" value="Из галереи" onclick="gallery_openRemote('answer1');"></p>
+                                <p>Загрузить файл</p>
+                                <p><input type="file" value="Добавить" onchange="gallery_uploadAndShow('answer1', this);"></p>
+
+                                <dialog class="modal-dialog" id="answer1_gallery_dialog">
+                                    <div id="answer1_gallery" class="gallery" hidden>
+                                        <p><img id="answer1_gallery_result" src="static/answare_196.png" onclick="selectImageInGallery('answer1')"></p>
+                                        <p> <ul id="answer1_gallery_thumbs"></ul></p>
+                                        <p class="gallery-buttons">
+                                            <input type="button" value="Выбрать" onclick="gallery_selectImage('answer1');"/>
+                                            <input type="button" value="Отмена" onclick="gallery_cancel('answer1');"/>
+                                        </p>
+                                    </div>
+                                    <div id="answer1_gallery_loading">
+                                        <h3>Зазругка изображений</h3>
+                                    </div>
+                                </dialog>
+                            </div>
+                            <div id="answer1_html" hidden>
+                                <h3>Вставка HTML кода</h3>
+                                <p><textarea id="answer1_html_text_area" rows="3" cols="120"><a href='http://nicedit.com/docs.php'/>Редактор</textarea></p>
+                                <p><input type="button" value="Предпросмотр" onclick="textType_htmlPreview('answer1')"></p>
+                                <div id="answer1_html_preview_block" hidden>
+                                    <div style="border: solid 1px #ccc;" id="answer1_html_preview">
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div id = "answer2" class="answers">
+                            <h2 id="answer2_title">Ответ № 2 (129)</h2>
+                            <input class="answers_remove" type="button" value="удалить"  onclick="removeAnswer('2');"/>
+                            <h3>Тип текста</h3>
+                            <p><select id="answer2_text_type" size="0" onchange="textTypeChanged(this, 'answer2', false)">
+                                <option selected value="0">Обычный текст</option>
+                                <option value="1">Одиночное изображение</option>
+                                <option value="2">HTML-код</option>
+                            </select></p>
+                            <!--<p id="answer1_text_type_hint">Обычный текст без фрмотирования</p>-->
+                            <div id="answer2_simple_text">
+                                <h3>Введите текст</h3>
+                                <p><textarea id="answer2_simple_text_area" rows="2" cols="120"></textarea></p>
+                            </div>
+                            <div id="answer2_image" hidden>
+                                <h3>Выберете изображение</h3>
+                                <p><img id="answer2_image_img" src="static/answare_196.png"></p>
+                                <p><input type="button" value="Из галереи" onclick="gallery_openRemote('answer2');"></p>
+                                <p>Загрузить файл</p>
+                                <p><input type="file" value="Добавить" onchange="gallery_uploadAndShow('answer2', this);"></p>
+
+                                <dialog class="modal-dialog" id="answer2_gallery_dialog">
+                                    <div id="answer2_gallery" class="gallery" hidden>
+                                        <p><img id="answer2_gallery_result" src="static/answare_196.png" onclick="selectImageInGallery('answer2')"></p>
+                                        <p> <ul id="answer2_gallery_thumbs"></ul></p>
+                                        <p class="gallery-buttons">
+                                            <input type="button" value="Выбрать" onclick="gallery_selectImage('answer2');"/>
+                                            <input type="button" value="Отмена" onclick="gallery_cancel('answer2');"/>
+                                        </p>
+                                    </div>
+                                    <div id="answer2_gallery_loading">
+                                        <h3>Зазругка изображений</h3>
+                                    </div>
+                                </dialog>
+                            </div>
+                            <div id="answer2_html" hidden>
+                                <h3>Вставка HTML кода</h3>
+                                <p><textarea id="answer2_html_text_area" rows="3" cols="120"><a href='http://nicedit.com/docs.php'/>Редактор</textarea></p>
+                                <p><input type="button" value="Предпросмотр" onclick="textType_htmlPreview('answer2')"></p>
+                                <div id="answer2_html_preview_block" hidden>
+                                    <div style="border: solid 1px #ccc;" id="answer2_html_preview">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <input class="answers_add" type="button" value="Добавить ответ" onclick="addAnswer();"/>
+                    </div>
+                    <div>
+                        <h3>Тип ответов вопроса</h3>
+                        <p><select id="correct_answer_type" size="0" onchange="correctAnswerTypeChanged(this)">
+                            <option selected value="0">Верный ответ только один</option>
+                            <option value="1">Несколько верных ответов</option>
+                            <option value="2">Ответ - целое число</option>
+                            <option value="3">Ответ - дробное число</option>
+                            <option value="4">Ответ - Текст</option>
+                        </select></p>
+                        <h3 id="correct_answer_type_hint">Выберете правильный ответ.</h3>
+                        <div id="correct_answer_type_single">
+                            <p id="correct_answer_single_p_1"><input id="correct_answer_single_1" name="single" type="radio" value="1"><span id="single_1">Ответ № 1</span></p>
+                            <p id="correct_answer_single_p_2"><input id="correct_answer_single_2" name="single" type="radio" value="2"><span id="single_2">Ответ № 2</span></p>
+                        </div>
+                        <div id="correct_answer_type_multiple" hidden>
+                            <p id="correct_answer_multiple_p_1"><input id="correct_answer_multiple_1" name="multiple" type="checkbox" value="1"><span id="multiple_1">Ответ №1</span></p>
+                            <p id="correct_answer_multiple_p_2"><input id="correct_answer_multiple_2" name="multiple" type="checkbox" value="2"><span id="multiple_2">Ответ №2</span></p>
+                        </div>
+                        <div id="correct_answer_type_int" hidden>
+                            <p id="correct_answer_int_p_1"><span id="int_1">Ответ на вопрос № 1 : </span><input id="correct_answer_int_1" type="text"></p>
+                            <p id="correct_answer_int_p_2"><span id="int_2">Ответ на вопрос № 2 : </span><input id="correct_answer_int_2" type="text"></p>
+                        </div>
+                        <div id="correct_answer_type_float" hidden>
+                            <p id="correct_answer_float_p_1"><span id="float_1">Ответ на вопрос № 1 : </span><input id="correct_answer_float_1" type="text"></p>
+                            <p id="correct_answer_float_p_2"><span id="float_2">Ответ на вопрос № 2 : </span><input id="correct_answer_float_2" type="text"></p>
+                        </div>
+                        <div id="correct_answer_type_str" hidden>
+                            <p id="correct_answer_str_p_1"><span id="str_1">Ответ на вопрос № 1 : </span><input id="correct_answer_str_1" type="text"></p>
+                            <p id="correct_answer_str_p_2"><span id="str_2">Ответ на вопрос № 2 : </span><input id="correct_answer_str_2" type="text"></p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3>Сложность вопроса (можно дробью, например, "7.2", можно не заполнять)</h3>
+                        <p><input id="question_rate" name="rate" value="1.0" /></p>
+                    </div>
+                </div>
+                <div>
+                    <hr>
+                    <p><input type="button" class='btn btn-success' value="Сохранить" onclick="save();"/>  <a href="./edit_questions?action=list&sub_section=200&section=136" class='btn btn-danger'>Отмена</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body></html>

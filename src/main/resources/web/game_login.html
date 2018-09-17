@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=cp1251"/>
+    <link rel="stylesheet" href="/web/css/test.css"/>
+    <script src="/web/js/crypto-js/rollups/md5.js"></script>
+    <script type="text/javascript">
+        function showLoading(show) {
+            var loadingView = document.getElementById('wait_dialog');
+            var contentView = document.getElementById('userFieldsBlock');
+            if (show) {
+                contentView.className = null;
+                contentView.hidden = true;
+                loadingView.className = 'wait_content';
+                loadingView.hidden = false;
+            } else {
+                loadingView.className = null;
+                loadingView.hidden = true;
+
+                contentView.className = 'content';
+                contentView.hidden = false;
+            }
+        }
+
+        function checkField(name, hint, regexp, error_message) {
+            var view = document.getElementById(name);
+            var hint = document.getElementById(hint);
+            var str = view.value;
+            if (str) str = str.trim();
+            var success;
+            if (regexp) {
+                success = regexp.match(str);
+            } else if (str) {
+                success = true
+            } else {
+                success = false;
+            }
+            if (!success) {
+                hint.innerText = error_message;
+                hint.className = 'test_error';
+            } else {
+                hint.innerText = '';
+                hint.className = null;
+            }
+            return success;
+        }
+
+        function hideHintOnEdit(hint) {
+            var hint = document.getElementById(hint);
+            document.getElementById('error_block').hidden = true;
+            hint.innerText = '';
+            hint.className = null;
+        }
+
+        function collectData() {
+            var user = new Object();
+            user.email= document.getElementById('user_email_text').value.trim();
+            user.password = document.getElementById('user_password_text').value.trim();
+            return user;
+        }
+
+        function showSuccess() {
+            window.location = "/games";
+        }
+
+        function showError(code) {
+            var message;
+            switch (code) {
+                case 1:
+                    message = 'Какая-то хуйвала при отправке данных'
+                    break;
+                case 2:
+                    message ='Почту обязательно';
+                    showHintError('user_email_hint', 'И Как ты с пустой постой будешь входить?')
+                    break;
+                case 3:
+                    message = 'ПАРОЛЬ!';
+                    showHintError('user_password_hint', 'А здесь продаётся славянский шкаф?')
+                    break;
+                case 4:
+                    message = 'Не не угадал, давай заново';
+                    showHintError('user_email_hint', 'Или тут спиздел')
+                    showHintError('user_password_hint', 'Или тут')
+                    break;
+                case 5:
+                    message = 'Чёта какая-то хуита, кажись с базой';
+                    break;
+                default:
+                    message = 'А хуй его знает! Говно случается(';
+                    break;
+
+            }
+            document.getElementById('error_block').hidden = false;
+            document.getElementById('error_message').innerText = message;
+        }
+
+        function showHintError(hintId, message) {
+            var hint = document.getElementById(hintId);
+            hint.innerText = message;
+            hint.className = 'test_error';
+        }
+
+        function checkData() {
+            showLoading(true);
+            var waitTitle = document.getElementById('wait_text');
+            waitTitle.innerText = "Проверка данных";
+            var success = true;
+
+            success = checkField('user_email_text', 'user_email_hint', '', 'И Как ты с пустой постой будешь входить?') && success;
+            success = checkField('user_password_text', 'user_password_hint', '', 'Для особо умных, НЕ ПУСТОЙ БЛЯДЬ!!!!') && success;
+            if (!success) {
+                showLoading(false);
+                document.getElementById('error_block').hidden = false
+                document.getElementById('error_message').innerText = "Слыыыш! еба! А ты ничего не забыл? э?"
+            } else {
+
+                var user = collectData();
+                user.password_type="md5";
+                user.raw=String(user.password);
+                user.password = String(CryptoJS.MD5(user.raw));
+
+                waitTitle.innerText = "Проверка вашего...";
+
+                var url = "./game_login?action=login"
+                var request = new XMLHttpRequest();
+                var body = "user="+encodeURIComponent(JSON.stringify(user));//todo: add
+                request.onreadystatechange = function () {
+                    if (request.readyState == 4) {
+                        if (request.responseText) {
+                            try {
+                                var js = JSON.parse(request.responseText);
+                                if (js.result == 'success') {
+                                    showLoading(false);
+                                    showSuccess();
+                                } else if (js.result == 'error') {
+                                    showLoading(false);
+                                    showError(js.code);
+                                    console.log("registration error: " + js.message);
+                                } else {
+                                    showLoading(false);
+                                    showError("Сервер - хуйло");
+                                }
+                            } catch(exception) {
+                                console.log('registration, POST data error: '+exception);
+                                showLoading(false);
+                                showError("Херня. серввак того-этого, ему походу пизда! Может позже прокатит?");
+                            }
+                        } else {
+                            showLoading(false)
+                            showError("Пните серввак, ему походу пизда! Может позже прокатит?");
+                        }
+                    }
+                };
+                request.open("POST", url, true);
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                request.send(body);
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Самые ахуительные настолочки!</h1>
+<div id="userDataBlock">
+    <div id="menu" class="menu">
+        ${main-menu}
+    </div>
+    <h2>Вход</h2>
+    <div id="error_block" hidden >
+        <h3 class="test_error_visible">Секундочку сэээр (мэээм)!</h3>
+        <p>Возникла некоторая оказия:</p>
+        <p id="error_message" class="test_error">некоторые поля заполнены совсем хуёво</p>
+    </div>
+    <div id="wait_dialog" hidden>
+        <p id="wait_text">Проверка данных</p>
+    </div>
+    <div class="content" id="userFieldsBlock">
+        <h3>Введите ваши данные</h3>
+        <p id="user_email_title" class="button_title">Логин (почта)</p>
+        <p id="user_email_hint" class="test_error_hidden">Азаза! Пустым низя!</p>
+        <input id="user_email_text" type="text" onkeydown="hideHintOnEdit('user_email_hint');">
+        <p id="user_password_title" class="button_title">Пароль.</p>
+        <p id="user_password_hint" class="test_error_hidden">Для особо умных, НЕ ПУСТОЙ БЛЯДЬ!!!!</p>
+        <input id="user_password_text" type="password" onkeydown="hideHintOnEdit('user_password_hint');">
+        <div style="margin-top: 20px">
+            <input id="send" type="button" value="Вход" onclick="checkData();">
+        </div>
+        <h3>Забыл?</h3>
+        <div style="margin-top: 20px">
+            <input id="recover" type="button" value="Забыл" onclick="window.location = '/recover' ">
+        </div>
+    </div>
+</div>
+</body></html>

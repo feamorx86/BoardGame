@@ -1,0 +1,58 @@
+.test_error {
+    color:indianred;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.test_error_hidden {
+    color:indianred;
+    visibility: hidden;
+    height: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+
+
+.button_title {
+    background-color: #f0f0f0;
+    color: indigo;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+input {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.menu {
+    background-color: #c0c0c0;
+    display: inline-block;
+}
+
+.content {
+    background-color: #f9f6f0;
+ }
+
+.wait_content {
+    background-color: #bce8f1;
+    margin: 100px;
+    padding: 50px;
+    font-size: 30pt;
+    display: inline-block;
+}
+
+.home_game_list_item {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: khaki;
+}
+
+.home_game_list_item img {
+    display: inline-block;width: 40px;height: 40px;
+}
+
+.home_game_list_item p {
+    display: inline-block;
+}

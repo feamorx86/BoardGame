@@ -1,0 +1,106 @@
+<html><head><meta charset="utf-8"/>
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,500' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100,500' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<header id="fh5co-header" role="banner">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						<div class="navbar-header"> 
+						<a class="navbar-brand" href="#">Сергей Свендровский Александрович из root</a>
+						</div>
+						<div id="fh5co-navbar" class="navbar-collapse collapse">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="./login?action=logout"><span>Сменить пользователя<span class="border"></span></span></a></li>
+								<li><a href="./simple_test"><span>Тестирование<span class="border"></span></span></a></li>
+								<li class="active"><a href="./edit_questions"><span>Редактировать вопросы<span class="border"></span></span></a></li>
+								<li><a href="./edit_category"><span>Редактировать разделы<span class="border"></span></span></a></li>
+								<li><a href="./admin"><span>Управление<span class="border"></span></span></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+	</header>
+	<div class="fh5co-intro text-center">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12 col-md-offset-1">
+<h1>Редкатор Вопросов</h1>
+<p>Раздел: ЗАКОНЫ ВЗАИМОДЕЙСТВИЯ И ДВИЖЕНИЯ ТЕЛ; подраздел: Материальная точка. Система отсчета. <a href="./edit_questions?action=list&sub_section=132&section=100">Вернуться к вопросам подраздела</a></p>
+<div class="col-md-3">
+<h2>Текст вопроса</h2>
+<h3>Ма&shy;те&shy;ри&shy;аль&shy;ная точка &ndash; это?</h3><a class='btn btn-outline' href="./edit_questions?action=edit_text_for_question&question=65&text_id=129">Изменить</a>
+</div>
+<div class="col-md-9 answers">
+<h2>Ответы на вопрос</h2>
+<table border=1>
+<tr>
+	<td>Ответ № 0(129)</td>
+	<td><p>Мо&shy;дель тела, раз&shy;ме&shy;ра&shy;ми и фор&shy;мой ко&shy;то&shy;ро&shy;го в дан&shy;ной за&shy;да&shy;че можно пре&shy;не&shy;бречь.</p></td>
+	<td>
+		<a class='btn btn-outline' href="./edit_questions?action=edit_answer&answer=129&question=65">Изменить ответ</a>
+		<a class='btn btn-danger' href="./edit_questions?action=delete_answer&answer=129&question=65">Удалить Ответ</a>
+	</td>
+	<td><input type='checkbox' name='right-answer-0' checked='checked'></td>
+</tr>
+<tr>
+	<td>Ответ № 1(130)</td>
+	<td><p>Мо&shy;дель тела, раз&shy;ме&shy;ра&shy;ми и фор&shy;мой ко&shy;то&shy;ро&shy;го в дан&shy;ной за&shy;да&shy;че можно пре&shy;не&shy;бречь.</p></td>
+	<td>
+		<a class='btn btn-outline' href="./edit_questions?action=edit_answer&answer=129&question=65">Изменить ответ</a>
+		<a class='btn btn-danger' href="./edit_questions?action=delete_answer&answer=129&question=65">Удалить Ответ</a>
+	</td>
+	<td><input type='checkbox' name='right-answer-0'></td>
+</tr>
+<tr>
+	<td>Ответ № 2(131)</td>
+	<td><p>Мо&shy;дель тела, раз&shy;ме&shy;ра&shy;ми и фор&shy;мой ко&shy;то&shy;ро&shy;го в дан&shy;ной за&shy;да&shy;че можно пре&shy;не&shy;бречь.</p></td>
+	<td>
+		<a class='btn btn-outline' href="./edit_questions?action=edit_answer&answer=129&question=65">Изменить ответ</a>
+		<a class='btn btn-danger' href="./edit_questions?action=delete_answer&answer=129&question=65">Удалить Ответ</a>
+	</td>
+	<td><input type='checkbox' name='right-answer-0' checked='checked'></td>
+</tr>
+<tr>
+	<td>Ответ № 3(132)</td>
+	<td><p>Мо&shy;дель тела, раз&shy;ме&shy;ра&shy;ми и фор&shy;мой ко&shy;то&shy;ро&shy;го в дан&shy;ной за&shy;да&shy;че можно пре&shy;не&shy;бречь.</p></td>
+	<td>
+		<a class='btn btn-outline' href="./edit_questions?action=edit_answer&answer=129&question=65">Изменить ответ</a>
+		<a class='btn btn-danger' href="./edit_questions?action=delete_answer&answer=129&question=65">Удалить Ответ</a>
+	</td>
+	<td><input type='checkbox' name='right-answer-0'></td>
+</tr>
+<tr>
+<td colspan=4><a class='btn btn-outline' href="./edit_questions?action=add_answer&question=65">Добавить ответ</a></td>
+</tr>
+</table>
+<!--
+<h2>Правильные ответы</h2>
+<div><p>Ответ Id : 97</p><a href="./edit_questions?action=edit_correct_answer&correct_answer=97&question=65"><p>Изменить ответ</p></a><a href="./edit_questions?action=delete_correct_answer&correct_answer=97&question=65"><p>Удалить ответ</p></a><p>Ответ № 0</p></div>
+<a href="./edit_questions?action=add_correct_answer&question=65"><p>Добавить ответ</p></a>
+-->
+<form class='editform' action="./edit_questions?action=edit&question=65"  method="POST">
+<p>Сложность вопроса (можно дробью, например, "7.2", можно не заполнять)</p>
+<input name="rate" value="1.0" />
+<!--
+<p>Тип ответа:</p>
+<select size="1" name="type" >
+<option selected value="0">Один верный ответ</option>
+<option value="1">Несколько верных ответов</option>
+<option value="3">Ответ - целое число</option>
+<option value="4">Ответ - дробное число</option>
+<option value="2">Ответ - текст</option>
+</select>
+-->
+<p><input class='btn btn-success' type="submit" value="Сохранить" /></p>
+</form>
+</div>
+</div>
+</div>
+</div>
+</body></html>

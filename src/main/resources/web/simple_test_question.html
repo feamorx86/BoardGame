@@ -1,0 +1,107 @@
+<html><head><meta charset="utf-8"/>
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,500' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100,500' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="./web/css/style.css">
+	<script type="application/javascript">
+
+		var timer = null;
+		var timeout = 0;
+
+		function updateTimer() {
+			timeout -= 1000;
+			displayTime(timeout);
+			if (timeout <=0) {
+				stopTimer();
+				goToFinish();
+			}
+		}
+
+		function displayTime(delay) {
+			if (timeout <=0) {
+				document.getElementById('timer_label').innerText = "Время вышло"
+			} else {
+				var seconds = Math.floor(timeout / 1000);
+				var minutes = Math.floor(seconds / 60);
+				seconds = seconds - (minutes * 60);
+				document.getElementById('timer_label').innerText = minutes+' : '+seconds;
+			}
+		}
+
+		function stopTimer() {
+			if (timer != null) {
+				window.clearInterval(timer);
+				timer = null;
+			}
+		}
+
+		function timeToDelay(hours, minutes, seconds) {
+			return hours * 60 * 60 * 1000 +
+					minutes * 60 * 1000;
+			seconds * 1000;
+		}
+
+		function startTimer(delay){
+			stopTimer();
+			if (delay > 0) {
+				timeout = delay;
+				displayTime(delay);
+				window.setInterval(updateTimer, 1000);
+			} else {
+
+			}
+		}
+
+		function goToFinish() {
+			document.getElementById('nav').value = 'end'; document.getElementById('result_form').submit();
+		}
+	</script>
+</head>
+<body onload="startTimer(${test-timeout})">
+<header id="fh5co-header" role="banner">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						<div class="navbar-header"> 
+						<a class="navbar-brand" href="./start">${user-name-title}</a>
+						</div>
+						<div id="fh5co-navbar" class="navbar-collapse collapse">
+							<ul class="nav navbar-nav navbar-right">
+								${nav-menu}
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+	</header>
+	<div class="fh5co-intro text-left">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12 col-md-offset-1">
+						<h1>${test-title}</h1>
+						<p class='p-info' id="timer_label"></p>
+						<h2>${question-number}</h2><hr>
+						<p style="font-size: 16pt">${question-text}</p><hr>
+						<h2>Ответы</h2>
+						<form action="${question-action}" id="result_form" method="POST">
+							<input type="hidden" name="navigation" id="nav"/>
+							${answers}
+							<!--<label><input type="radio" name="result" value="155">Равновесным называется такое со­сто­я­ние тела, при ко­то­ром скалярная сумма всех дей­ству­ю­щих на него сил равна единице.</label>-->
+							<!--<label><input type="radio" name="result" value="153" >Рав­но­вес­ным на­зы­ва­ет­ся такое со­сто­я­ние тела, при ко­то­ром гео­мет­ри­че­ская сумма всех дей­ству­ю­щих на него сил равна единице.</label>-->
+							<!--<label><input type="radio" name="result" value="152" >Рав­но­вес­ным на­зы­ва­ет­ся такое со­сто­я­ние тела, при ко­то­ром гео­мет­ри­че­ская сумма всех дей­ству­ю­щих на него сил равна нулю.</label>-->
+							<!--<label><input type="radio" name="result" value="154" >Рав­но­вес­ным на­зы­ва­ет­ся такое со­сто­я­ние тела, при ко­то­ром скалярная сумма всех дей­ству­ю­щих на него сил равна нулю.</label>-->
+						</form>
+						<hr>
+						${question-nav-previous}
+						${question-nav-next}
+						или перейти к вопросу №:
+						${questions-nav}
+						<p class='mt10'>
+							<a class='btn btn-danger' href="javascript:{ goToFinish(); } ">Закончить тест</a>
+						</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</body></html>

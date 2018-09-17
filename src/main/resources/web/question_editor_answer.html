@@ -1,0 +1,45 @@
+<div id = "answer${index}" class="answers" question_id = "(${answer-id})">
+    <h2 id="answer${index}_title">Ответ № ${index} </h2>
+    <input class="answers_remove" type="button" value="удалить" onclick="removeAnswer('${index}')"/>
+    <h3>Тип текста</h3>
+    <p><select id="answer${index}_text_type" size="0" onchange="textTypeChanged(this, 'answer${index}', false)">
+        <option ${answer-type-select-0} value="0">Обычный текст</option>
+        <option ${answer-type-select-1} value="1">Одиночное изображение</option>
+        <option ${answer-type-select-2} value="2">HTML-код</option>
+    </select></p>
+    <div id="answer${index}_simple_text" ${answer-text-hidden-0} >
+        <h3>Введите текст</h3>
+        <p><textarea id="answer${index}_simple_text_area" rows="2" cols="120">${answer-text-simple}</textarea></p>
+    </div>
+    <div id="answer${index}_image" ${answer-text-hidden-1}>
+        <h3>Выберете изображение</h3>
+        <p><img id="answer${index}_image_img" src="${answer-text-img}"></p>
+        <p><input type="button" value="Из галереи" onclick="gallery_openRemote('answer${index}');"></p>
+        <p>Загрузить файл</p>
+        <p><input type="file" value="Добавить" onchange="gallery_uploadAndShow('answer${index}', this);"></p>
+
+        <dialog class="modal-dialog" id="answer${index}_gallery_dialog">
+            <div id="answer${index}_gallery" class="gallery" hidden>
+                <p><img id="answer${index}_gallery_result" src="${answer-text-img}" onclick="selectImageInGallery('answer${index}')"></p>
+                <p> <ul id="answer${index}_gallery_thumbs"></ul></p>
+                <p class="gallery-buttons">
+                    <input type="button" value="Выбрать" onclick="gallery_selectImage('answer${index}');"/>
+                    <input type="button" value="Отмена" onclick="gallery_cancel('answer${index}');"/>
+                </p>
+            </div>
+            <div id="answer${index}_gallery_loading">
+                <h3>Зазругка изображений</h3>
+            </div>
+        </dialog>
+    </div>
+    <div id="answer${index}_html" ${answer-text-hidden-2}>
+        <h3>Вставка HTML кода</h3>
+        <p><textarea id="answer${index}_html_text_area" rows="3" cols="120">${answer-text-html}</textarea></p>
+        <p><input type="button" value="Предпросмотр" onclick="textType_htmlPreview('answer${index}')"></p>
+        <div id="answer${index}_html_preview_block" ${answer-text-html-hidden}>
+            <div style="border: solid 1px #ccc;" id="answer${index}_html_preview">
+                ${answer-text-html}
+            </div>
+        </div>
+    </div>
+</div>

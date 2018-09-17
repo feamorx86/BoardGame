@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=cp1251"/>
+    <link rel="stylesheet" href="/web/css/test.css"/>
+    <script type="text/javascript">
+
+    </script>
+</head>
+<body>
+<h1>Самые ахуительные настолочки!</h1>
+<h2>Велком!</h2>
+<p>Тутм заебись!</p>
+<div id="content">
+    <div hiden ${user-login-hiden} >
+        <h3>Вход \ Регистрация</h3>
+        <p style="font-size: 16pt;font-style: italic">Впервые?</p>
+        <p>Перед тем как начать играть сперва нужно быстренько зарегаться</p>
+        <a href="/game_registration">Регистрация</a>
+        <p style="font-size: 16pt;font-style: italic">Уже были раньше?</p>
+        <a href="/game_login">Вход</a>
+    </div>
+    <div hiden ${user-profile} >
+        <h3>И снова здравствуйте</h3>
+        <a href="/profile">${user-name}</a>
+        <h4>Уведомления</h4>
+        <p><a href="/user_messages">Сообщения: (3) </a></p>
+        <p><a href="/user_friends">Друзья (13): запросы 5 </a></p>
+        <h4>Избранные игры</h4>
+        <ul>
+            <li>Крестики-нолики <a href="/start_game?type=2">Начать</a></li>
+            <li>Города реки сёла <a href="/start_game?type=2">Начать</a></li>
+        </ul>
+        <h4>Текущие игры</h4>
+        <ul>
+            <li>Крестики-нолики <a href="/game_session?id=134&action=return">Вернуться</a> <a href="/game_session?id=134&action=exit">Закончить</a></li>
+        </ul>
+    </div>
+    <div>
+        <h2>Во что поиграть?</h2>
+        <ul>
+            <li>
+                <a href="/games/krest-nol">Крестики-нолики</a>
+                <div class="home_game_list_item">
+                    <img src="static/games/krest-nol/icon.png">
+                    <p>Классические крестики-нолики, есть возможность сиграть как с соперником так и против компьютера</p>
+                </div>
+            </li>
+            <li>
+                <a href="games/goroda-reki-sela">Города реки сёла</a>
+                <div class="home_game_list_item">
+                    <img src="static/games/goroda-reki-sela/icon.png">
+                    <p >Старая детская викторина</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div>
+    <h3>Немного статистики</h3>
+    <ul>
+    <li>Всего пользователей ${total-users}</li>
+    <li>Играют сейчас ${total-ing-game-users}</li>
+    <li>Всего игр ${total-games}</li>
+    </ul>
+    <p>Ваши предложения и пожелания: </p><a href="mailto:${owner-email}?subject=$[app-name}">На почту</a>
+    <p><a href="${about-page-url}">О сервисе</a></p>
+</div>
+</body></html>

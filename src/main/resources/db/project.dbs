@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="H2" id="Project_4faf1e0" template="Default" database="H2" >
+	<schema name="PUBLIC" catalogname="base.h2.db" schemaname="PUBLIC" >
+		<table name="ANSWER" >
+			<column name="ID" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_03381DB2_F413_4863_A4BB_1BE14946F2B5)</defo>
+			</column>
+			<column name="TEXT_DATA_ID" type="integer" length="250" jt="4" mandatory="y" />
+			<column name="QUESTION_ID" type="integer" jt="4" mandatory="y" />
+			<column name="POSITION" type="integer" jt="4" mandatory="y" />
+			<index name="CONSTRAINT_7" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+			<index name="IDX_ANSWER" unique="NORMAL" >
+				<column name="TEXT_DATA_ID" />
+			</index>
+			<index name="IDX_ANSWER_0" unique="NORMAL" >
+				<column name="QUESTION_ID" />
+			</index>
+			<fk name="FK_ANSWER" to_schema="PUBLIC" to_table="TEXT_DATA" >
+				<fk_column name="TEXT_DATA_ID" pk="ID" />
+			</fk>
+			<fk name="FK_ANSWER_0" to_schema="PUBLIC" to_table="QUESTION" >
+				<fk_column name="QUESTION_ID" pk="ID" />
+			</fk>
+		</table>
+		<table name="CORRECT_ANSWER" >
+			<column name="ID" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_E279072F_BB78_4CC3_BAFC_0D519ED4EC61)</defo>
+			</column>
+			<column name="QUESTION_ID" type="integer" jt="4" mandatory="y" />
+			<column name="ANSWER_ID" type="integer" jt="4" mandatory="y" />
+			<column name="INT_RESULT" type="integer" jt="4" />
+			<column name="FLOAT_RESULT" type="double" length="17" decimal="0" jt="8" />
+			<column name="STR_RESULT" type="varchar" length="200" jt="12" />
+			<index name="CONSTRAINT_B" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+			<index name="IDX_CORRECT_ANSWER" unique="NORMAL" >
+				<column name="QUESTION_ID" />
+			</index>
+			<index name="IDX_CORRECT_ANSWER_0" unique="NORMAL" >
+				<column name="ANSWER_ID" />
+			</index>
+			<fk name="FK_CORRECT_ANSWER" to_schema="PUBLIC" to_table="QUESTION" >
+				<fk_column name="QUESTION_ID" pk="ID" />
+			</fk>
+			<fk name="FK_CORRECT_ANSWER_0" to_schema="PUBLIC" to_table="ANSWER" >
+				<fk_column name="ANSWER_ID" pk="ID" />
+			</fk>
+		</table>
+		<table name="QUESTION" >
+			<column name="ID" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_5D8787E6_0487_42CD_9FE9_7761E93EC3D8)</defo>
+			</column>
+			<column name="TYPE" type="integer" jt="4" mandatory="y" />
+			<column name="TEXT_DATA_ID" type="integer" length="250" jt="4" mandatory="y" />
+			<column name="SECTION_ID" type="integer" jt="4" mandatory="y" />
+			<column name="SUB_SECTION_ID" type="integer" jt="4" mandatory="y" />
+			<column name="RATE" type="double" length="17" decimal="0" jt="8" mandatory="y" />
+			<column name="CAN_RANDOMIZE" type="boolean" jt="16" mandatory="y" />
+			<index name="CONSTRAINT_E" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+			<index name="IDX_QUESTION" unique="NORMAL" >
+				<column name="SECTION_ID" />
+			</index>
+			<index name="IDX_QUESTION_0" unique="NORMAL" >
+				<column name="SUB_SECTION_ID" />
+			</index>
+			<index name="IDX_QUESTION_1" unique="NORMAL" >
+				<column name="TEXT_DATA_ID" />
+			</index>
+			<fk name="FK_QUESTION" to_schema="PUBLIC" to_table="SECTION" >
+				<fk_column name="SECTION_ID" pk="ID" />
+			</fk>
+			<fk name="FK_QUESTION_0" to_schema="PUBLIC" to_table="SUBSECTION" >
+				<fk_column name="SUB_SECTION_ID" pk="ID" />
+			</fk>
+			<fk name="FK_QUESTION_1" to_schema="PUBLIC" to_table="TEXT_DATA" >
+				<fk_column name="TEXT_DATA_ID" pk="ID" />
+			</fk>
+		</table>
+		<table name="SECTION" >
+			<column name="ID" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_DBC50383_A6DC_4E3D_AC09_5F39E318BCA2)</defo>
+			</column>
+			<column name="TITLE" type="varchar" length="200" jt="12" mandatory="y" />
+			<column name="DESCRIPTION" type="varchar" length="1000" jt="12" />
+			<column name="COMMENT" type="varchar" length="200" jt="12" />
+			<column name="POSITION" type="integer" jt="4" mandatory="y" />
+			<index name="CONSTRAINT_A0" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+		</table>
+		<table name="SESSION" >
+			<column name="ID" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_C5DC439E_B6BB_4B74_9F0C_2995EAF7BEAE)</defo>
+			</column>
+			<column name="SESSION" type="varchar" length="30" jt="12" mandatory="y" />
+			<column name="USER_ID" type="integer" jt="4" mandatory="y" />
+			<index name="CONSTRAINT_A" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+			<index name="IDX_SESSION" unique="NORMAL" >
+				<column name="USER_ID" />
+			</index>
+			<fk name="FK_SESSION" to_schema="PUBLIC" to_table="USER" >
+				<fk_column name="USER_ID" pk="ID" />
+			</fk>
+		</table>
+		<table name="SUBSECTION" >
+			<column name="ID" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_406F3590_BB2D_4B1A_AEA8_8CD79E905590)</defo>
+			</column>
+			<column name="TITLE" type="varchar" length="200" jt="12" mandatory="y" />
+			<column name="SUBTITLE" type="varchar" length="1000" jt="12" />
+			<column name="COMMENT" type="varchar" length="200" jt="12" />
+			<column name="SECTION_ID" type="integer" jt="4" mandatory="y" />
+			<column name="POSITION" type="integer" jt="4" mandatory="y" />
+			<index name="CONSTRAINT_D" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+			<index name="IDX_SUBSECTION" unique="NORMAL" >
+				<column name="SECTION_ID" />
+			</index>
+			<fk name="FK_SUBSECTION" to_schema="PUBLIC" to_table="SECTION" >
+				<fk_column name="SECTION_ID" pk="ID" />
+			</fk>
+		</table>
+		<table name="TEXT_DATA" >
+			<column name="ID" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_ABBFEAFA_BDCA_4FE4_BA24_4B662E0B73D3)</defo>
+			</column>
+			<column name="TYPE" type="integer" jt="4" mandatory="y" />
+			<column name="TEXT" type="varchar" length="2000" jt="12" mandatory="y" />
+			<index name="CONSTRAINT_6" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+		</table>
+		<table name="USER" >
+			<column name="ID" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_1815486A_951B_418E_801A_8850BFBC3FDC)</defo>
+			</column>
+			<column name="TYPE" type="integer" jt="4" mandatory="y" />
+			<column name="FIRST_NAME" type="varchar" length="200" jt="12" mandatory="y" />
+			<column name="SECOND_NAME" type="varchar" length="200" jt="12" mandatory="y" />
+			<column name="THIRD_NAME" type="varchar" length="200" jt="12" />
+			<column name="LOGIN" type="varchar" length="200" jt="12" />
+			<column name="PASSWORD" type="varchar" length="200" jt="12" />
+			<column name="TAG" type="varchar" length="200" jt="12" />
+			<index name="CONSTRAINT_2" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+		</table>
+		<sequence name="SYSTEM_SEQUENCE_03381DB2_F413_4863_A4BB_1BE14946F2B5" start="1" />
+		<sequence name="SYSTEM_SEQUENCE_1815486A_951B_418E_801A_8850BFBC3FDC" start="7" />
+		<sequence name="SYSTEM_SEQUENCE_406F3590_BB2D_4B1A_AEA8_8CD79E905590" start="1" />
+		<sequence name="SYSTEM_SEQUENCE_5D8787E6_0487_42CD_9FE9_7761E93EC3D8" start="1" />
+		<sequence name="SYSTEM_SEQUENCE_ABBFEAFA_BDCA_4FE4_BA24_4B662E0B73D3" start="29" />
+		<sequence name="SYSTEM_SEQUENCE_C5DC439E_B6BB_4B74_9F0C_2995EAF7BEAE" start="1" />
+		<sequence name="SYSTEM_SEQUENCE_DBC50383_A6DC_4E3D_AC09_5F39E318BCA2" start="1" />
+		<sequence name="SYSTEM_SEQUENCE_E279072F_BB78_4CC3_BAFC_0D519ED4EC61" start="1" />
+	</schema>
+	<connector name="H2" database="H2" driver_class="org.h2.Driver" driver_jar="h2-1.4.196.jar" driver_desc="File, Using Authentication" host="localhost" port="-1" instance="C:/Repositories/github/StudentsTesting/src/main/resources/db/base.h2.db" user="feamor" passwd="MTk3OQ==" />
+	<layout name="Default Layout" id="Layout_ce2857" show_relation="columns" >
+		<entity schema="PUBLIC" name="SESSION" color="c1d8ee" x="45" y="300" />
+		<entity schema="PUBLIC" name="ANSWER" color="c1d8ee" x="270" y="60" />
+		<entity schema="PUBLIC" name="CORRECT_ANSWER" color="c1d8ee" x="240" y="255" />
+		<entity schema="PUBLIC" name="QUESTION" color="c1d8ee" x="465" y="240" />
+		<entity schema="PUBLIC" name="SECTION" color="c1d8ee" x="705" y="165" />
+		<entity schema="PUBLIC" name="SUBSECTION" color="c1d8ee" x="705" y="345" />
+		<entity schema="PUBLIC" name="USER" color="c1d8ee" x="45" y="75" />
+		<entity schema="PUBLIC" name="TEXT_DATA" color="c1d8ee" x="510" y="45" />
+		<script name="TEXT_DATA" id="Editor_296e371" language="SQL" >
+			<string><![CDATA[DELETE FROM PUBLIC.TEXT_DATA;]]></string>
+		</script>
+		<script name="USER_001" id="Editor_25d51f1" language="SQL" >
+			<string><![CDATA[DELETE FROM PUBLIC."USER";]]></string>
+		</script>
+		<browser id="Browse_5653f0a" name="SECTION_001" confirm_updates="y" >
+			<browse_table schema="PUBLIC" entity="SECTION" x="20" y="20" width="426" height="328" />
+		</browser>
+		<browser id="Browse_20a577b" name="SUBSECTION" confirm_updates="y" >
+			<browse_table schema="PUBLIC" entity="SUBSECTION" x="20" y="20" width="426" height="328" />
+		</browser>
+		<browser id="Browse_117dc06" name="USER" confirm_updates="y" >
+			<browse_table schema="PUBLIC" entity="USER" x="20" y="20" width="426" height="328" />
+		</browser>
+	</layout>
+</project>

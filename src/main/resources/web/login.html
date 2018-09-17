@@ -1,0 +1,47 @@
+<html><head><meta charset="utf-8"/>
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,500' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100,500' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="./web/css/style.css">
+</head>
+<body>
+<header id="fh5co-header" role="banner">
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="./start">${user-name-title}</a>
+					</div>
+					<div id="fh5co-navbar" class="navbar-collapse collapse">
+						<ul class="nav navbar-nav navbar-right">
+							${nav-menu}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
+</header>
+
+<div class="fh5co-intro text-center">
+	<div class="container">
+		<div class="row">
+			${messages}
+			<div class="col-md-8 col-md-offset-2">
+				<h2>Введите имя пользователя</h2>
+				<form action="./login?action=login"  method="POST" class="editform">
+					<div class="row">
+						<p class='mb5'>Имя вользователя</p>
+						<input name="login" value="${login}"/>
+					</div>
+					<div class="row">
+						<p class='mb5'>Пароль</p>
+						<input type="password" name="password" value="${password}"/>
+					</div>
+					<input class='btn btn-primary' type="submit" value="Войти" class='mt10'/>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+</body></html>
